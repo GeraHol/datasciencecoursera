@@ -65,10 +65,10 @@ plda<-predict(modellda,testing2);
 prf<-predict(modrf,testing2)
 
 #out of sample error
-sum(pldapca==testing2)/nrow(testing2)
-sum(plda==testing2)/nrow(testing2)
-sum(pnb==testing2)/nrow(testing2)
-sum(prf==testing2)/nrow(testing2)
+sum(pldapca==testing2$classe)/nrow(testing2)
+sum(plda==testing2$classe)/nrow(testing2)
+sum(pnb==testing2$classe)/nrow(testing2)
+sum(prf==testing2$classe)/nrow(testing2)
 
 #step 5 Course Project Prediction Quiz Portion
 predict(modrf, testing)

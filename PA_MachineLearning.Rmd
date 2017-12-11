@@ -59,6 +59,12 @@ modrf<-train(classe ~., method="rf", data=training2)
 prf<-predict(modrf,testing2)
 
 #out of sample error
+<<<<<<< HEAD
+=======
+sum(pldapca==testing2$classe)/nrow(testing2)
+sum(plda==testing2$classe)/nrow(testing2)
+sum(pnb==testing2$classe)/nrow(testing2)
+>>>>>>> c05fb08cc586ebbe2db4be8371cceb40105b6cdb
 sum(prf==testing2$classe)/nrow(testing2)
 
 #step 5 Course Project Prediction Quiz Portion

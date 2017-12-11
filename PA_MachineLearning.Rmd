@@ -7,7 +7,7 @@ output: html_document
 
 ##Summary
 
-Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. The goal is to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants and predict the manner in which they did the exercise. After data exploration different classification models (lineair discriminant analysis, naive bayes, random forest) were applied, and the one with the highest accuracy was selected to make predictions on the test data set. The random forest model had an accuracy of 0.993 and did better than lda and nb, which had similar accuracies of 0.73.
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. The goal is to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants and predict the manner in which they did the exercise. The random forest model had an accuracy of 0.993.
 
 Data
 The training data: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
@@ -19,7 +19,8 @@ Approach:
 1. explore data to decide on preprocessing steps
 2. select only explaning variables that occurred in the test data set; exclude time measurements.
 3. create own testing data set to enable cross validation
-4. compare different classification models to predict the correct 'classe' : lda, nb, random forest 5. select the 'best' model to predict classe for the testing data set
+4. run random forest and cross validate 
+5. apply the 'best' model to predict classe for the testing data set
 
 ```{r basics}
 #step 0
@@ -35,7 +36,7 @@ training$classe<-as.factor(training$classe)
 ```
 
 During data exploration I noticed a high numbers of NAs, and decided to only use variables that occurred in the test dataset. I also looked at the correlation between predictors; those were high and thus I decided to use pca for preprocessing.
-Here a data partition is made to create an own testing set to test how good the different models are at prediction the correct classes.
+Here a data partition is made to create an own testing set to test how well the model is at prediction the correct classes.
 ```{r exploration, echo=FALSE}
 #step 2 only train with columns that are not NA in the testing data set 
 subtraining<-training[,colSums(is.na(testing))==0]
@@ -51,24 +52,14 @@ M<-abs(cor(training2[,-c(1,54)]))
 
 ```
 
-Different classification models are applied: lda (lineair discriminant analysis), nb(naive bayes) and random forest. It appeared that PCA preprocessing did not improve accuracy, and hence this was abandoned.
 ```{r modelling}
 #step 4
-modelldapca<-train(classe ~., method="lda", preProcess="pca", data=training2)
-modellda<-train(classe ~., method="lda", data=training2)
-modnb<-train(classe ~., method="nb", data=training2) 
 modrf<-train(classe ~., method="rf", data=training2) 
 
-pldapca<-predict(modelldapca,testing2); 
-pnb<-predict(modnb,testing2);
-plda<-predict(modellda,testing2); 
 prf<-predict(modrf,testing2)
 
 #out of sample error
-sum(pldapca==testing2)/nrow(testing2)
-sum(plda==testing2)/nrow(testing2)
-sum(pnb==testing2)/nrow(testing2)
-sum(prf==testing2)/nrow(testing2)
+sum(prf==testing2$classe)/nrow(testing2)
 
 #step 5 Course Project Prediction Quiz Portion
 predict(modrf, testing)
